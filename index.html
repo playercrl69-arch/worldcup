@@ -8,68 +8,20 @@
 
 <!-- Plyr CSS -->
 <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-
-<style>
-body {
-    margin: 0;
-    background: #000;
-}
-
-/* Player wrapper */
-.player-wrapper {
-    position: relative;
-    max-width: 100%;
-    background: #000;
-}
-
-/* Top fullscreen button */
-.top-fullscreen {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 99;
-    background: rgba(0,0,0,0.7);
-    color: #fff;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-/* Remove fullscreen from bottom controls */
-.plyr__controls button[data-plyr="fullscreen"] {
-    display: none !important;
-}
-
-/* Premium watermark credit */
-.credit-watermark {
-    position: absolute;
-    bottom: 10px;
-    right: 12px;
-    z-index: 50;
-    font-size: 11px;
-    color: #fff;
-    opacity: 0.6;
-    background: rgba(0,0,0,0.4);
-    padding: 4px 8px;
-    border-radius: 6px;
-    pointer-events: none;
-}
-</style>
 </head>
 
-<body>
+<body style="margin:0;background:#000;">
 
-<div class="player-wrapper">
-    <!-- Top fullscreen button -->
-    <button class="top-fullscreen" onclick="goFullscreen()">⛶</button>
+<!-- Player -->
+<video id="player" controls playsinline></video>
 
-    <!-- Video -->
-    <video id="player" playsinline controls></video>
-
-    <!-- Credit watermark -->
-    <div class="credit-watermark">© Created by Ramit</div>
+<!-- Watermark BELOW player -->
+<div style="
+text-align:center;
+font-size:13px;
+color:#aaa;
+margin:8px 0 12px 0;">
+© Created by Ramit
 </div>
 
 <!-- HLS.js -->
@@ -91,25 +43,15 @@ if (Hls.isSupported()) {
     video.src = source;
 }
 
-/* Init Plyr */
-const player = new Plyr(video, {
-    controls: [
-        'play',
-        'progress',
-        'current-time',
-        'mute',
-        'volume'
-    ]
-});
+/* Plyr default (no customization) */
+const player = new Plyr(video);
 
-/* Fullscreen + landscape lock */
-function goFullscreen() {
-    if (video.requestFullscreen) {
-        video.requestFullscreen();
-    } else if (video.webkitEnterFullscreen) {
-        video.webkitEnterFullscreen();
-    }
+/* Force landscape on fullscreen (mobile) */
+video.addEventListener('enterpictureinpicture', lockLandscape);
+video.addEventListener('webkitbeginfullscreen', lockLandscape);
+video.addEventListener('fullscreenchange', lockLandscape);
 
+function lockLandscape() {
     if (screen.orientation && screen.orientation.lock) {
         screen.orientation.lock('landscape').catch(() => {});
     }
