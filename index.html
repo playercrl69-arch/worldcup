@@ -6,7 +6,6 @@
 
 <title>Plyr Player</title>
 
-<!-- Plyr CSS -->
 <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 
 <style>
@@ -15,12 +14,11 @@ body {
     background: #000;
 }
 
-/* Wrapper only for top button positioning */
 .player-wrapper {
     position: relative;
 }
 
-/* Top fullscreen button (simple) */
+/* Top fullscreen button */
 .top-fullscreen {
     position: absolute;
     top: 10px;
@@ -40,10 +38,7 @@ body {
 <body>
 
 <div class="player-wrapper">
-    <!-- Top fullscreen button -->
     <button class="top-fullscreen" onclick="goFullscreen()">⛶</button>
-
-    <!-- Video -->
     <video id="player" controls playsinline></video>
 </div>
 
@@ -52,17 +47,14 @@ body {
     © Created by Ramit
 </div>
 
-<!-- HLS.js -->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-<!-- Plyr JS -->
 <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
 
 <script>
 const video = document.getElementById('player');
 const source = "https://live-en.aisports.cc/moviebox/device01/playlist.m3u8";
 
-/* Load HLS */
+/* HLS */
 if (Hls.isSupported()) {
     const hls = new Hls();
     hls.loadSource(source);
@@ -71,16 +63,12 @@ if (Hls.isSupported()) {
     video.src = source;
 }
 
-/* Plyr DEFAULT init */
+/* Plyr default */
 const player = new Plyr(video);
 
-/* Fullscreen + landscape */
+/* ✅ Correct fullscreen */
 function goFullscreen() {
-    if (video.requestFullscreen) {
-        video.requestFullscreen();
-    } else if (video.webkitEnterFullscreen) {
-        video.webkitEnterFullscreen();
-    }
+    player.fullscreen.enter();
 
     if (screen.orientation && screen.orientation.lock) {
         screen.orientation.lock('landscape').catch(() => {});
