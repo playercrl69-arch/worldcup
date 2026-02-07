@@ -4,11 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Video Player</title>
+
 <!-- Plyr CSS -->
 <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 
 <style>
-/* Player container */
+body {
+    margin: 0;
+    background: #000;
+}
+
+/* Player wrapper */
 .player-wrapper {
     position: relative;
     max-width: 100%;
@@ -27,11 +34,27 @@
     padding: 8px 12px;
     border-radius: 6px;
     cursor: pointer;
+    font-size: 14px;
 }
 
 /* Remove fullscreen from bottom controls */
 .plyr__controls button[data-plyr="fullscreen"] {
     display: none !important;
+}
+
+/* Premium watermark credit */
+.credit-watermark {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    z-index: 50;
+    font-size: 11px;
+    color: #fff;
+    opacity: 0.6;
+    background: rgba(0,0,0,0.4);
+    padding: 4px 8px;
+    border-radius: 6px;
+    pointer-events: none;
 }
 </style>
 </head>
@@ -39,8 +62,14 @@
 <body>
 
 <div class="player-wrapper">
+    <!-- Top fullscreen button -->
     <button class="top-fullscreen" onclick="goFullscreen()">⛶</button>
+
+    <!-- Video -->
     <video id="player" playsinline controls></video>
+
+    <!-- Credit watermark -->
+    <div class="credit-watermark">© Created by Ramit</div>
 </div>
 
 <!-- HLS.js -->
@@ -53,7 +82,7 @@
 const video = document.getElementById('player');
 const source = "https://live-en.aisports.cc/moviebox/device01/playlist.m3u8";
 
-/* HLS support */
+/* Load HLS */
 if (Hls.isSupported()) {
     const hls = new Hls();
     hls.loadSource(source);
@@ -62,7 +91,7 @@ if (Hls.isSupported()) {
     video.src = source;
 }
 
-/* Plyr init */
+/* Init Plyr */
 const player = new Plyr(video, {
     controls: [
         'play',
@@ -73,10 +102,13 @@ const player = new Plyr(video, {
     ]
 });
 
-/* Fullscreen + Landscape lock */
+/* Fullscreen + landscape lock */
 function goFullscreen() {
-    if (video.requestFullscreen) video.requestFullscreen();
-    else if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
+    if (video.requestFullscreen) {
+        video.requestFullscreen();
+    } else if (video.webkitEnterFullscreen) {
+        video.webkitEnterFullscreen();
+    }
 
     if (screen.orientation && screen.orientation.lock) {
         screen.orientation.lock('landscape').catch(() => {});
