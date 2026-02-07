@@ -4,24 +4,52 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Video Player</title>
+<title>Plyr Player</title>
 
 <!-- Plyr CSS -->
 <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+
+<style>
+body {
+    margin: 0;
+    background: #000;
+}
+
+/* Wrapper only for top button positioning */
+.player-wrapper {
+    position: relative;
+}
+
+/* Top fullscreen button (simple) */
+.top-fullscreen {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+</style>
 </head>
 
-<body style="margin:0;background:#000;">
+<body>
 
-<!-- Player -->
-<video id="player" controls playsinline></video>
+<div class="player-wrapper">
+    <!-- Top fullscreen button -->
+    <button class="top-fullscreen" onclick="goFullscreen()">⛶</button>
+
+    <!-- Video -->
+    <video id="player" controls playsinline></video>
+</div>
 
 <!-- Watermark BELOW player -->
-<div style="
-text-align:center;
-font-size:13px;
-color:#aaa;
-margin:8px 0 12px 0;">
-© Created by Ramit
+<div style="text-align:center;font-size:13px;color:#aaa;margin:8px 0;">
+    © Created by Ramit
 </div>
 
 <!-- HLS.js -->
@@ -43,15 +71,17 @@ if (Hls.isSupported()) {
     video.src = source;
 }
 
-/* Plyr default (no customization) */
+/* Plyr DEFAULT init */
 const player = new Plyr(video);
 
-/* Force landscape on fullscreen (mobile) */
-video.addEventListener('enterpictureinpicture', lockLandscape);
-video.addEventListener('webkitbeginfullscreen', lockLandscape);
-video.addEventListener('fullscreenchange', lockLandscape);
+/* Fullscreen + landscape */
+function goFullscreen() {
+    if (video.requestFullscreen) {
+        video.requestFullscreen();
+    } else if (video.webkitEnterFullscreen) {
+        video.webkitEnterFullscreen();
+    }
 
-function lockLandscape() {
     if (screen.orientation && screen.orientation.lock) {
         screen.orientation.lock('landscape').catch(() => {});
     }
